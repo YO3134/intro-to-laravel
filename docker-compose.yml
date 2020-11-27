@@ -1,0 +1,23 @@
+version: "3.8" # docker-compose fileversion
+services:
+  app:
+    build: ./infra/php # docker buildする際の作業ディレクトリ
+    volumes: # ホスト側ディレクトリや名前付きボリュームをコンテナにマウント
+      - ./backend:/work
+
+  web:
+    image: nginx:1.18-alpine
+    ports:
+      - 7070:80
+    volumes: # host:container
+      - ./backend:/work
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    working_dir: /work
+
+  db:
+    build: ./infra/mysql
+    volumes:
+      - db-store:/var/lib/mysql
+
+volumes:
+  db-store:
